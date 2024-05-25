@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/spf13/viper"
 	"os"
+
+	"github.com/spf13/viper"
 )
 
 type Conf struct {
@@ -10,7 +11,7 @@ type Conf struct {
 }
 
 func LoadConfig(path string) (*Conf, error) {
-	if os.Getenv("ENV") == "PROD" {
+	if os.Getenv("ENVIRONMENT") == "PROD" {
 		return &Conf{
 			WeatherToken: os.Getenv("WEATHER_TOKEN"),
 		}, nil
