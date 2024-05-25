@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/mateus-sousa/fc-deploy-cloud-run/config"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
+
+	"github.com/gorilla/mux"
+	"github.com/mateus-sousa/fc-deploy-cloud-run/config"
 )
 
 type CEP struct {
@@ -87,29 +88,19 @@ func main() {
 		log.Fatal(err)
 	}
 	r := mux.NewRouter()
-	r.HandleFunc("/getweather", getWeather)
-	fmt.Println("listening in port :8080")
+	r.HandleFunc("/getweather/{cep}", getWeather)
+	fmt.Println("listening in port with mux :8080")
 	http.ListenAndServe(":8080", r)
 }
 
 func getWeather(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
-		return
+	vars := mux.Vars(r)
+	cepNumber := vars["cep"]
+	cep := CEP{
+		Number: cepNumber,
 	}
-	var cep CEP
-	err = json.Unmarshal(body, &cep)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	err = validateCEP(cep)
+	err := validateCEP(cep)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusUnprocessableEntity)
