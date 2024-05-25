@@ -1,0 +1,10 @@
+version: "3"
+services:
+  goapp:
+    ports:
+      - "8080:8080"
+    build:
+      context: .
+    environment:
+      WEATHER_TOKEN: 'b31e34e7d8d842b4849182050243004'
+      ENV: 'PROD'
